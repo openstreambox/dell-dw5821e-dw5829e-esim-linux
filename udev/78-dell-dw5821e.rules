@@ -1,0 +1,35 @@
+# Dell DW5821e-eSIM (Foxconn T77W968) — stable per-interface
+# symlinks for the modem in PPP mode.
+#
+# Without these rules the kernel `option` driver assigns ttyUSB indices
+# monotonically: every CFUN reset / USB rebind shifts the modem off
+# /dev/ttyUSB0 (ttyUSB0..3 → ttyUSB1..4 → …). All our PPP/lpac scripts
+# would hardcode /dev/ttyUSB0 and silently break. The 2026-05-12 outage
+# (170+ recovery attempts, 1h circuit-breaker, dead MTS bearer) was
+# precisely this. With stable symlinks, scripts use /dev/dw5821e-at and
+# always reach the AT control port regardless of the underlying index.
+#
+# Interface map for DW5821e in MBIM mode (bConfigurationValue=2):
+#   if02 = AT control (lpac AT-CSIM + our PPP scripts)
+#   if03 = AT alternate
+#   if04 = NMEA / GPS
+#   if05 = DM / diagnostic
+# (if00 + if01 form the cdc_mbim WWAN net device; not a tty.)
+#
+# Install:
+#   sudo cp udev/78-dell-dw5821e.rules /etc/udev/rules.d/
+#   sudo udevadm control --reload-rules
+#   sudo udevadm trigger --subsystem-match=tty --action=change
+# Verify:
+#   ls -la /dev/dw5821e-*
+
+# Note: idVendor/idProduct live on the USB device parent (3-9) while
+# bInterfaceNumber lives on the USB interface parent (3-9:2.N). udev's
+# ATTRS{} matches a single parent device only, so we can't combine
+# them in one rule. Match on the ID_* env properties instead — they
+# are extracted to the tty device itself by 60-serial.rules earlier
+# in the chain.
+SUBSYSTEM=="tty", ENV{ID_USB_VENDOR_ID}=="413c", ENV{ID_USB_MODEL_ID}=="81e0", ENV{ID_USB_INTERFACE_NUM}=="02", SYMLINK+="dw5821e-at"
+SUBSYSTEM=="tty", ENV{ID_USB_VENDOR_ID}=="413c", ENV{ID_USB_MODEL_ID}=="81e0", ENV{ID_USB_INTERFACE_NUM}=="03", SYMLINK+="dw5821e-at2"
+SUBSYSTEM=="tty", ENV{ID_USB_VENDOR_ID}=="413c", ENV{ID_USB_MODEL_ID}=="81e0", ENV{ID_USB_INTERFACE_NUM}=="04", SYMLINK+="dw5821e-gps"
+SUBSYSTEM=="tty", ENV{ID_USB_VENDOR_ID}=="413c", ENV{ID_USB_MODEL_ID}=="81e0", ENV{ID_USB_INTERFACE_NUM}=="05", SYMLINK+="dw5821e-dm"

@@ -1,0 +1,3 @@
+# Dell DW5829e-eSIM (413c:81e4): force USB configuration 1 (QMI) instead of 2 (MBIM).
+# lpac's QMI APDU driver and qmicli WDS sessions need the qmi_wwan/cdc-wdm exposure of config 1.
+ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="413c", ATTR{idProduct}=="81e4", ATTR{bConfigurationValue}=="2", ATTR{bConfigurationValue}="1"

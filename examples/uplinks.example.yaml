@@ -1,0 +1,17 @@
+# Example uplink declaration consumed by uplink-bootstrap.sh / your agent.
+# One modem holds one bearer at a time, so profiles are switched sequentially.
+# profile_aid = ISD-P AID of the eSIM profile as printed by `lpac profile list`
+# (the a0000005591010ffffffff89000011xx values are the standard GSMA slots).
+uplinks:
+  - name: Wired
+    type: wired
+  - name: Operator A
+    type: sim
+    modem_slot: 2          # DW5829e: eUICC sits on UIM slot 2; DW5821e-eSIM: single eUICC
+    profile_aid: a0000005591010ffffffff8900001100
+    apn: internet.example-a
+  - name: Operator B
+    type: sim
+    modem_slot: 2
+    profile_aid: a0000005591010ffffffff8900001200
+    apn: internet.example-b

@@ -1,0 +1,5 @@
+title: "Dell DW5821e-eSIM & DW5829e-eSIM on Linux"
+description: "eSIM profiles with lpac, QMI and PPP data sessions, udev rules, policy routing and recovery notes for the Dell Snapdragon X20 modems"
+lang: en
+plugins:
+  - jekyll-sitemap

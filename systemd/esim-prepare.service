@@ -1,0 +1,12 @@
+[Unit]
+Description=Prepare eSIM modem environment (lpac RPATH symlinks)
+After=local-fs.target
+# Add "Before=<your-agent>.service" if an agent depends on lpac being ready.
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/lpac-setup-tmpdir.sh
+
+[Install]
+WantedBy=multi-user.target

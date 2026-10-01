@@ -1,0 +1,15 @@
+[Unit]
+Description=Prepare eSIM modem environment (DW5821e, lpac AT build)
+After=local-fs.target
+# Add "Before=<your-agent>.service" if an agent depends on lpac being ready.
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/lpac-setup-tmpdir-at.sh
+# Wait for the AT port (udev symlink from 78-dell-dw5821e.rules) so the first
+# lpac call after boot does not race the modem's enumeration.
+ExecStartPost=/bin/bash -c 'for i in $(seq 1 30); do [ -c /dev/dw5821e-at ] && exit 0; sleep 2; done; echo "WARNING: /dev/dw5821e-at not found after 60s"'
+
+[Install]
+WantedBy=multi-user.target
