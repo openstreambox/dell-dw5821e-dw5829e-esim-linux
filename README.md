@@ -1,4 +1,4 @@
-# Dell DW5821e-eSIM and DW5829e-eSIM on Linux
+# Dell DW5821e eSIM and DW5829e eSIM on Linux
 
 Working notes, scripts and udev/systemd glue for running the two Dell
 **Snapdragon X20** LTE modems with their **built-in eUICC (eSIM)** on a plain
